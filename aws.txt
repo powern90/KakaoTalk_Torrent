@@ -1,0 +1,45 @@
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_rsa.pub seed@kkhnas.gq
+
+sudo apt-get install python3-pip
+sudo pip3 install --upgrade pip
+
+sudo apt-get install python3-venv
+mkdir Django
+cd Django
+python3 -m venv myvenv
+source myvenv/bin/activate
+cd ..
+sh install.sh
+pip3 install --upgrade pip
+pip3 install xlrd
+sudo apt-get install xvfb
+pip3 install pyvirtualdisplay
+pip3 install Django
+sudo apt-get install apache2
+sudo apt-get install libapache2-mod-wsgi-py3
+
+django-admin startproject bot .
+python manage.py startapp torrent
+
+sudo nano /etc/apache2/sites-available/000-default.conf
+
+WSGIDaemonProcess bot python-path=/home/ubuntu/Django/bot:/home/ubuntu/Django/myvenv/lib/python3.5/site-packages
+<VirtualHost *:80>
+ 
+        ServerAdmin webmaster@localhost
+        WSGIScriptAlias / /home/ubuntu/Django/bot/wsgi.py
+  
+        <Directory /home/ubuntu/Django/bot>
+        <Files wsgi.py>
+                Require all granted
+        </Files>
+        </Directory>
+ 
+</VirtualHost>
+
+sudo apachectl -k restart
